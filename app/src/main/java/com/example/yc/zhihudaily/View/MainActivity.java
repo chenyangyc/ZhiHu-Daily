@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements Contract.ViewPres
         initLayout();
         setUpLoad();
         setUpRefresh();
-        listAdapter.stories.clear();
-        listAdapter.topStories.clear();
         listAdapter.initData(data);
         swipeRefreshLayout.setRefreshing(false);
         listAdapter.notifyDataSetChanged();
@@ -66,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements Contract.ViewPres
         this.data = datas;
     }
 
+    @Override
+    public void refreshView(){
+        initLayout();
+        listAdapter.initData(data);
+        swipeRefreshLayout.setRefreshing(false);
+        listAdapter.notifyDataSetChanged();
+    }
     /**
      * 设置上拉加载
      */
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements Contract.ViewPres
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                listPresenter.getData();
+                listPresenter.refreshData();
             }
         });
     }

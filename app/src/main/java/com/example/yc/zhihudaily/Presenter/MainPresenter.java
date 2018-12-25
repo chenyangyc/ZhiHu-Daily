@@ -39,6 +39,24 @@ public class MainPresenter implements Contract.ListPresenter{
     }
 
     @Override
+    public void refreshData() {
+        Call<Datas> call = netModel.refresh();
+        call.enqueue(new Callback<Datas>() {
+            @Override
+            public void onResponse(@NonNull Call<Datas> call, @NonNull Response<Datas> response) {
+                viewPresenter.setData(response.body());
+                viewPresenter.refreshView();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull Throwable throwable) {
+                Toast.makeText((Context) viewPresenter, "Internet connecting failed", Toast.LENGTH_SHORT).show();
+                throwable.printStackTrace();
+            }
+        });
+    }
+
+    @Override
     public void loadMore(String date) {
         Call<Datas> call = netModel.update(date);
         call.enqueue(new Callback<Datas>() {

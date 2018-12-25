@@ -23,33 +23,36 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ListAdapter extends RecyclerView.Adapter {
 
+    int size = 1;
     private Datas datas;
     private Context mContext;
-    public List<Datas> dataList = new ArrayList<>();
+    private Map<Integer,String> date = new HashMap<>();
     public List<Datas.StoriesEntity> stories = new ArrayList<>();
     public List<Top_storiesEntity> topStories = new ArrayList<>();
-    private List<Integer> positions = new ArrayList<>();
-    private List<String> dateList = new ArrayList<>();
 
     public ListAdapter(Context context, Datas datas) {
         this.mContext = context;
         this.datas = datas;
-        dataList.add(datas);
-        this.positions.add(1);
-        this.dateList.add(datas.getDate());
     }
 
+    /**
+     * 首次打开及下拉刷新的数据
+     * @param datas
+     */
     public void initData(Datas datas){
         this.datas = datas;
-        dataList.add(datas);
+        this.stories.clear();
+        this.topStories.clear();
         this.stories = datas.getStories();
         this.topStories = datas.getTop_stories();
-        this.positions.add(0);
-        this.dateList.add(datas.getDate());
+        date.put(size,datas.getDate());
+        size = stories.size() + 1;
     }
 
     /**
@@ -57,22 +60,10 @@ public class ListAdapter extends RecyclerView.Adapter {
      * @param datas
      */
     public void addData(Datas datas){
-        dataList.add(datas);
         this.stories.addAll(datas.getStories());
-        this.positions.add(stories.size()+1);
-        this.dateList.add(datas.getDate());
-        this.notifyDataSetChanged();
-    }
-
-    /**
-     * 下拉刷新的数据
-     * @param datas
-     */
-    public void refresh(Datas datas){
-        stories.clear();
-        stories.addAll(datas.getStories());
-//        positions.add(1);
-        notifyDataSetChanged();
+        date.put(size,datas.getDate());
+        size = stories.size() + 1;
+        notifyItemChanged(size,size + stories.size());
     }
 
     @NonNull
@@ -122,17 +113,15 @@ public class ListAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            for (int j = 0; j < positions.size(); j++) {
-                if (i == 1 && i == positions.get(j)) {
+            if(date.containsKey(i)){
+                storyViewHolder.date.setVisibility(View.VISIBLE);
+                if(i == 1){
                     storyViewHolder.date.setText("今日热闻");
-                    storyViewHolder.date.setVisibility(View.VISIBLE);
-                } else if (i == positions.get(j)) {
-                    String weekday = getWeekday(dateList.get(j));
-                    String formatDate = dateList.get(j).substring(4, 6) + "月"
-                            + dateList.get(j).substring(6) + "日  " + weekday;
-                    storyViewHolder.date.setText(formatDate);
-                    storyViewHolder.date.setVisibility(View.VISIBLE);
+                }else {
+                    storyViewHolder.date.setText(formatDate(date.get(i)));
                 }
+            }else{
+                storyViewHolder.date.setVisibility(View.GONE);
             }
         }
     }
@@ -175,7 +164,7 @@ public class ListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public String getWeekday(String date) {
+    public String formatDate(String date) {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("yymmdd");
         Date d = null;
@@ -212,7 +201,7 @@ public class ListAdapter extends RecyclerView.Adapter {
             default:
                 break;
         }
-        return str;
+        return date.substring(4,6) + "月" + date.substring(6) + "日" + "    " + str;
     }
 
 }
