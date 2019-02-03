@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class NetModel {
 
     internal var okHttpClient = OkHttpClient.Builder()
-            .retryOnConnectionFailure(false)
+            .retryOnConnectionFailure(true)
             .connectTimeout(9999, TimeUnit.MILLISECONDS)
             .build()
 
@@ -22,7 +22,7 @@ class NetModel {
             .client(okHttpClient)
             .build()
 
-    internal var api = retrofit.create(GetApi::class.java)
+    var api = retrofit.create(GetApi::class.java)
 
     fun refresh(): Call<Datas> {
         return api.list

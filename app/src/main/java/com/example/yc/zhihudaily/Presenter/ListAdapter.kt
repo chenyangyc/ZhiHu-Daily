@@ -57,7 +57,7 @@ class ListAdapter(private val mContext: Context, private var datas: Datas?) : Re
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var view: View?
+        var view: View
         var viewHolder: RecyclerView.ViewHolder? = null
 
         when (getItemViewType(viewType)) {
