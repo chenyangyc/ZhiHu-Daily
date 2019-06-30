@@ -1,3 +1,3 @@
 # Project
-twt exercise
-在secondcommit中修复了重复加载文章列表的bug，加入了格式化好的很漂亮的日期
+天津大学天外天工作室日常联系项目
+基于知乎日报的开源api进行仿写
